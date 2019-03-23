@@ -1,28 +1,53 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route, Link, withRouter } from 'react-router-dom';
 import './App.css';
+import isAuth from './HOCS/isAuth';
+
+const Menu = withRouter(({ match }) => {
+	return (
+		<React.Fragment>
+			<Link to="/">/</Link>
+			{' | '}
+			<Link to="/dashboard">Dashboard</Link>
+			{' | '}
+		</React.Fragment>
+	);
+});
+
+const Dashboard = isAuth(({ match }) => {
+	return (
+		<React.Fragment>
+			<p>Dashboard</p>
+			<Link to={`${match.path}/clients`}>Clientes</Link>
+			{' | '}
+			<Link to={`${match.path}/products`}>Productos</Link>
+
+			<Route path={`${match.path}/clients`} component={Clients} />
+			<Route path={`${match.path}/products`} component={Products} />
+		</React.Fragment>
+	);
+});
+
+const Clients = () => {
+	return <p>Cientes</p>;
+};
+
+const Products = () => {
+	return <p>Products</p>;
+};
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div className="App">
+				<Router>
+					<Menu />
+					<Route exact path="/" component={() => <p>Main</p>} />
+					<Route path="/dashboard" component={Dashboard} />
+				</Router>
+			</div>
+		);
+	}
 }
 
 export default App;
